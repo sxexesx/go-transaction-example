@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgre-db:
+    image: postgres:14
+    container_name: postgre14-db
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./data.sql:/docker-entrypoint-initdb.d/postgres_data.sql
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
