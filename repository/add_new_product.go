@@ -24,17 +24,18 @@ type Sku struct {
 
 func (r *Repo) AddNewProduct(ctx context.Context, item Item, sku Sku) error {
 	return r.WithTx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
-		return r.addNewProductTx(ctx, tx, item, sku)
+		return addNewProductTx(ctx, tx, item, sku)
 	})
 }
 
-func (r *Repo) addNewProductTx(ctx context.Context, tx *sqlx.Tx, item Item, sku Sku) error {
-	_, err := tx.QueryxContext(ctx, insertItemSQL, item.ItemID, item.Name, item.SellerID, item.Description)
+func addNewProductTx(ctx context.Context, tx *sqlx.Tx, item Item, sku Sku) error {
+	var itemDB Item
+	err := tx.GetContext(ctx, &itemDB, insertItemSQL, item.ItemID, item.Name, item.SellerID, item.Description)
 	if err != nil {
 		return err
 	}
-
-	_, err = tx.QueryxContext(ctx, insertSkuSQL, sku.SkuID, sku.ItemID, sku.Name, sku.Description)
+	var skuDB Sku
+	err = tx.GetContext(ctx, &skuDB, insertSkuSQL, sku.SkuID, sku.ItemID, sku.Name, sku.Description)
 	if err != nil {
 		return err
 	}

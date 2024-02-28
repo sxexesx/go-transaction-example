@@ -24,6 +24,7 @@ func (r *Repo) WithTx(ctx context.Context, f func(context.Context, *sqlx.Tx) err
 	if err != nil {
 		return errors.Wrap(err, "db begin tx")
 	}
+
 	if err := f(ctx, tx); err != nil {
 		if err2 := tx.Rollback(); err2 != nil {
 			return fmt.Errorf("db rollback:%w: %w", err2, err)
